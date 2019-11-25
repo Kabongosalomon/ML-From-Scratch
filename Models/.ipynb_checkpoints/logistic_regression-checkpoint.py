@@ -43,5 +43,9 @@ class LogisticRegression:
     
         return self.__sigmoid(np.dot(X, self.theta))
     
+<<<<<<< HEAD
     def predict(self, X, threshold=0.5):
+=======
+    def predict(self, X, threshold=.5):
+>>>>>>> b3f84967dbe8c5bf6dd329a59739f6acd8141878
         return self.predict_prob(X) >= threshold
