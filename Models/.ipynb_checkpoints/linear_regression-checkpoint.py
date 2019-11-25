@@ -1,5 +1,5 @@
 import numpy as np
-
+import ipdb
 class LinearRegression:
     def __init__(self, lr=0.001, num_iter=100000, batch_size=1, verbose=False):
         self.lr = lr
@@ -22,9 +22,7 @@ class LinearRegression:
         self.theta = np.zeros(X.shape[1])
         
         for i in range(self.num_iter):
-            z = np.dot(X, self.theta)
-            h = z
-                        
+            h = np.dot(X, self.theta)
             rand = np.random.choice(y.size, self.batch_size).squeeze()
             gradient = np.dot(X[rand].T, (h[rand] - y[rand]))/y.size   
         
