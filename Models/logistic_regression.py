@@ -6,6 +6,11 @@ class LogisticRegression:
         self.num_iter = num_iter
         self.batch_size = batch_size
         self.verbose = verbose
+        self.h = None
+        self.labels = None
+        self.n_label = None
+        self.thetas = []
+        
     
     def __add_intercept(self, X):
         intercept = np.ones((X.shape[0], 1))
@@ -14,38 +19,57 @@ class LogisticRegression:
     def __sigmoid(self, z):
         return 1 / (1 + np.exp(-z))
     
+    def __sofmax(self, z):
+        exp = np.exp(z-np.max(z, axis=1).reshape((-1,1)))
+        norms = np.sum(exp, axis=1).reshape((-1,1))
+        return exp / norms
+    
     def __loss(self, h, y):
-        return (-y * np.log(h) - (1 - y) * np.log(1 - h)).mean()
+        return (-y * np.log(h)).sum()
+#         return (-y * np.log(h) - (1 - y) * np.log(1 - h)).mean()
     
     def fit(self, X, y):
+        
+        self.labels = np.unique(y)
+        # To handle the case where the y is a float
+        self.labels = self.labels.astype('i')        
+        self.n_label = len(self.labels)
         
         X = self.__add_intercept(X)
         
         # weights initialization
-        self.theta = np.zeros(X.shape[1])
         
-        for i in range(self.num_iter):
-            z = np.dot(X, self.theta)
-            h = self.__sigmoid(z)
-                        
-            rand = np.random.choice(y.size, self.batch_size).squeeze()
-            gradient = np.dot(X[rand].T, (h[rand] - y[rand]))/y.size   
         
-            self.theta -= self.lr * gradient
-            
-            if(self.verbose == True and i % 100 == 0):
-                z = np.dot(X, self.theta)
+        for k in range(self.n_label):
+            theta = np.zeros(X.shape[1])
+            for i in range(self.num_iter):
+                z = np.dot(X, theta)
                 h = self.__sigmoid(z)
-                print(f'loss: {self.__loss(h, y)} \t')
+
+                y_ = np.where(y == k, 1, 0)
+    
+                rand = np.random.choice(y_ .size, self.batch_size).squeeze()
+                gradient = np.dot(X[rand].T, (h[rand] - y_ [rand]))/y_ .size   
+
+                theta -= self.lr * gradient
+
+                if(self.verbose == True and i % 100 == 0):
+                    z = np.dot(X, theta)
+                    h = self.__sigmoid(z)
+                    print(f'loss: {self.__loss(h, y_ )} \t')
+            self.thetas.append(theta)
     
     def predict_prob(self, X):
         X = self.__add_intercept(X)
+
+        return softmax(np.dot(X, np.array(self.thetas).T))
     
-        return self.__sigmoid(np.dot(X, self.theta))
+    def predict(self, X,):
+        return np.argmax(self.predict_prob(X), axis=1)  
     
-<<<<<<< HEAD
-    def predict(self, X, threshold=0.5):
-=======
-    def predict(self, X, threshold=.5):
->>>>>>> b3f84967dbe8c5bf6dd329a59739f6acd8141878
-        return self.predict_prob(X) >= threshold
+    def accuracy(self, y, y_hat):
+        count=0
+        for i in range(len(y)):
+            if y[i]==y_hat[i]:
+                count+=1
+        return count/len(y)
