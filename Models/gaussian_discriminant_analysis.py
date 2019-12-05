@@ -1,10 +1,11 @@
 import numpy as np
 from numpy.linalg import inv
 import scipy.stats
+import ipdb
 
 
 class GaussianDiscriminantAnalysis:
-    def __init__(self, epsilon=1e-5):
+    def __init__(self, epsilon=1e-9):
         self.epsilon = epsilon
         self.phi = []
         self.sigma = 0
@@ -53,9 +54,9 @@ class GaussianDiscriminantAnalysis:
         pxpy = []
         for i in range(self.n_label):
             # We are adding self.epsilon to avoid non inverstible matrix
+#             ipdb.set_trace()
             pxpy.append((1/(2*pi)**(dim/2)*np.sqrt(np.linalg.det(self.sigma)))*\
-                        np.exp(np.dot(np.dot((-0.5*(x-self.u[i]).T), inv(self.sigma+\
-                                                                         self.epsilon)), (x-self.u[i]))))
+                        np.exp(np.dot(np.dot((-0.5*(x-self.u[i]).T), np.linalg.pinv(self.sigma)), (x-self.u[i]))))
         
         return pxpy
 

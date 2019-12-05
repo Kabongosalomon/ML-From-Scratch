@@ -62,10 +62,10 @@ class LogisticRegression:
     def predict_prob(self, X):
         X = self.__add_intercept(X)
 
-        return softmax(np.dot(X, np.array(self.thetas).T))
+        return self.__sofmax(np.dot(X, np.array(self.thetas).T))
     
     def predict(self, X,):
-        return np.argmax(self.predict_prob(X), axis=1)  
+        return self.labels[np.argmax(self.predict_prob(X), axis=1)]
     
     def accuracy(self, y, y_hat):
         count=0
