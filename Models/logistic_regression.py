@@ -73,3 +73,5 @@ class LogisticRegression:
             if y[i]==y_hat[i]:
                 count+=1
         return count/len(y)
+
+    np.linalg.qr
